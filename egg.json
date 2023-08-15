@@ -88,8 +88,8 @@
         },
         {
             "name": "PMMP Version",
-            "description": "PocketMine version to install.",
-            "env_variable": "Latest PMMP_VERSION",
+            "description": "Latest PocketMine version to install.",
+            "env_variable": "PMMP_VERSION",
             "default_value": "PM5",
             "user_viewable": true,
             "user_editable": true,
