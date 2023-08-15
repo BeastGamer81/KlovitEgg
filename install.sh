@@ -43,12 +43,11 @@ if [ ! -f "server.jar" ] && [ ! -f "PocketMine-MP.phar" ]; then
 sleep 5
 echo "
   $(tput setaf 3)Which platform are you gonna use?
-  1) Paper 1.8.8       6)  Paper 1.18.2 
+  1) Paper 1.8.8       6)  Paper 1.18.2        11) PocketmineMP
   2) Paper 1.12.2      7)  Paper 1.19.2
   3) Paper 1.15.2      8)  Paper 1.20.1
   4) Paper 1.16.5      9)  BungeeCord
   5) Paper 1.17.1      10)  Node.js
-  11) PocketmineMP
   "
 read -r n
 
