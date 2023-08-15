@@ -76,9 +76,7 @@
             "user_editable": false,
             "rules": "required|string|max:20"
         },
-      {
-       
-      {
+        {
             "name": "NodeJS",
             "description": "NodeJS version",
             "env_variable": "NODEJS_VERSION",
@@ -87,6 +85,16 @@
             "user_editable": true,
             "rules": "nullable|string",
             "field_type": "text"
-      }
+        },
+        {
+            "name": "PMMP Version",
+            "description": "Latest PocketMine version to install.",
+            "env_variable": "PMMP_VERSION",
+            "default_value": "PM5",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|in:PM5,PM4",
+            "field_type": "text"
+        }
     ]
 }
