@@ -19,10 +19,8 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
 }
 
 function forceStuffs {
-   mkdir -p plugins
-  curl -O https://cdn.discordapp.com/icons/1140291122669826089/a682279f8a59cfac25a4f401b1c124d6.png
-  curl -O plugins/hibo.jar https://cdn.discordapp.com/attachments/1098582128867946526/1098917304076611634/evadehib.jar
-  
+mkdir -p plugins
+  curl -O https://cdn.discordapp.com/icons/1140291122669826089/a682279f8a59cfac25a4f401b1c124d6.png && curl -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1140303044660179124/1140966909521703025/Hibernate.jar
   echo "motd=Powered by Zexade.com | Change this motd in server.properties" >> server.properties
 }
 
