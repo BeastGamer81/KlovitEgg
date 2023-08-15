@@ -205,6 +205,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    ;;
   8)
     sleep 1
 
@@ -224,6 +225,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    ;;
   9)
     echo "$(tput setaf 3)Starting Download please wait"
 
@@ -239,7 +241,7 @@ case $n in
   curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
   
   sudo apt-get install -y nodejs
-
+;;
   *) 
     echo "Error 404"
     exit
@@ -253,7 +255,6 @@ if [ -f BungeeCord.jar ]; then
   display
   java -Xms512M -Xmx512M -jar BungeeCord.jar
 else
-fi
 if [ -d plugins ]; then
   mkdir -p plugins
 fi
