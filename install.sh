@@ -241,8 +241,8 @@ case $n in
 
     display 
 
-    java -Xms512M -Xmx512M -jar BungeeCord.jar
-    forcestuffs
+    java -Xms512M -Xmx512M -jar server.jar
+    
   ;;
   10)
   echo "$(tput setaf 3)Starting Download please wait"
