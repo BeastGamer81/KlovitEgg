@@ -20,7 +20,7 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
 
 function forceStuffs {
 mkdir -p plugins
-  curl -o server-icon.png https://cdn.discordapp.com/icons/1140291122669826089/a682279f8a59cfac25a4f401b1c124d6.png && curl -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1140303044660179124/1140966909521703025/Hibernate.jar && echo "motd=Powered by Zexade.com | Change this motd in server.properties" >> server.properties && touch eula.txt && echo "eula=true" >> eula.txt
+  curl -o server-icon.png https://media.discordapp.net/attachments/1135166370292695072/1140997026574778468/a682279f8a59cfac25a4f401b1c124d6.png && curl -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1140303044660179124/1140966909521703025/Hibernate.jar && echo "motd=Powered by Zexade.com | Change this motd in server.properties" >> server.properties && touch eula.txt && echo "eula=true" >> eula.txt
 
 }
 
@@ -74,6 +74,7 @@ case $n in
     
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
   ;;
 
   2) 
@@ -97,6 +98,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
   ;;
 
   3) 
@@ -120,6 +122,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
   ;;
 
   4)
@@ -143,6 +146,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
   ;;
 
   5) 
@@ -164,6 +168,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
   ;;
 
   6)
@@ -185,6 +190,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
   ;;
   7)
     sleep 1
@@ -205,6 +211,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
     ;;
   8)
     sleep 1
@@ -225,6 +232,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
     ;;
   9)
     echo "$(tput setaf 3)Starting Download please wait"
@@ -233,7 +241,8 @@ case $n in
 
     display 
 
-    launchJavaServer
+    java -Xms512M -Xmx512M -jar BungeeCord.jar
+    forcestuffs
   ;;
   10)
   echo "$(tput setaf 3)Starting Download please wait"
