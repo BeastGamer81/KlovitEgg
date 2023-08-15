@@ -144,6 +144,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
   ;;
 
   5) 
@@ -165,6 +166,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
   ;;
 
   6)
@@ -186,6 +188,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
   ;;
   7)
     sleep 1
@@ -206,6 +209,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
     ;;
   8)
     sleep 1
@@ -226,6 +230,7 @@ case $n in
 
     optimizeJavaServer
     launchJavaServer
+    forcestuffs
     ;;
   9)
     echo "$(tput setaf 3)Starting Download please wait"
@@ -235,6 +240,7 @@ case $n in
     display 
 
     java -Xms512M -Xmx512M -jar BungeeCord.jar
+    forcestuffs
   ;;
   10)
   echo "$(tput setaf 3)Starting Download please wait"
