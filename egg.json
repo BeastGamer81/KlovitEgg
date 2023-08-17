@@ -22,7 +22,7 @@
         "NodeJS 14": "ghcr.io\/parkervcp\/yolks:nodejs_14",
         "NodeJS 12": "ghcr.io\/parkervcp\/yolks:nodejs_12"
     },
-    "file_denylist": [],
+    "file_denylist": ["install.sh"],
     "startup": "bash install.sh",
     "config": {
         "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\",\r\n            \"query.port\": \"{{server.build.default.port}}\"\r\n        }\r\n    }\r\n}",
