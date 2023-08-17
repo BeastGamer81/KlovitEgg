@@ -57,6 +57,16 @@
             "user_editable": true,
             "rules": "required|string|in:PM5,PM4",
             "field_type": "text"
-        }
+        },
+        {
+            "name": "NodeJS Main file",
+            "description": "The file that starts the app.\r\nCan be .js and .ts",
+            "env_variable": "NODE_MAIN_FILE",
+            "default_value": "index.js",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        },
     ]
 }

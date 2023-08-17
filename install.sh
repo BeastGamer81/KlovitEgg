@@ -43,7 +43,7 @@ function optimizeJavaServer {
   
 }
 
-if [ ! -f "server.jar" ] && [ ! -f "PocketMine-MP.phar" ]; then
+if [ ! -f "server.jar" ] && [ ! -f "nodejs" ] && [ ! -f "PocketMine-MP.phar" ]; then
     display
 sleep 5
 echo "
@@ -243,7 +243,11 @@ case $n in
 
     curl -o server.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
 
-    display 
+    display
+    
+    sleep 10
+
+    echo -e ""
 
     java -Xms512M -Xmx512M -jar server.jar
     
@@ -254,6 +258,16 @@ case $n in
     echo "Go to startup option and select nodejs then restart server!"
     exit
   fi
+  echo "$(tput setaf 3)Starting Download please wait"
+  touch nodejs
+  
+  display
+  
+  sleep 10
+
+  echo -e ""
+  
+  node $NODE_MAIN_FILE
 ;;
   11)
   echo "$(tput setaf 3)Starting Download please wait"
@@ -288,5 +302,23 @@ if [ -f "server.jar" ]; then
 elif [ -f "PocketMine-MP.phar" ]; then
     display
     launchPMMPServer
+elif [ -f "nodejs" ]; then
+    display
+    echo "
+      $(tput setaf 3)What to run?
+      1) Run main file      2) Install packages from package.json
+  "
+    read -r action
+    case $action in
+      1)
+        node $NODE_MAIN_FILE
+      ;;
+      2)
+        npm install
+      ;;
+      *) 
+        echo "Error 404"
+        exit
+      ;;
 fi
 fi
