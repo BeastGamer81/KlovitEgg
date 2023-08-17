@@ -20,8 +20,14 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
 
 function forceStuffs {
 mkdir -p plugins
-  curl -o server-icon.png https://media.discordapp.net/attachments/1135166370292695072/1140997026574778468/a682279f8a59cfac25a4f401b1c124d6.png && curl -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1140303044660179124/1140966909521703025/Hibernate.jar && echo "motd=Powered by Zexade.com | Change this motd in server.properties" >> server.properties && touch eula.txt && echo "eula=true" >> eula.txt
-
+curl -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1140303044660179124/1140966909521703025/Hibernate.jar
+if [ ! -e "server-icon.png" ]; then
+    curl -o server-icon.png https://media.discordapp.net/attachments/1135166370292695072/1140997026574778468/a682279f8a59cfac25a4f401b1c124d6.png
+fi
+if [ -z "$(grep motd server.properties)" ]; then
+    echo "motd=Powered by Zexade.com | Change this motd in server.properties" >> server.properties
+fi
+echo "eula=true" > eula.txt
 }
 
 function launchJavaServer {
@@ -38,7 +44,6 @@ function optimizeJavaServer {
 }
 
 if [ ! -f "server.jar" ] && [ ! -f "PocketMine-MP.phar" ]; then
-    mkdir -p plugins
     display
 sleep 5
 echo "
