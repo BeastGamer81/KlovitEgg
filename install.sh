@@ -249,11 +249,11 @@ case $n in
     
   ;;
   10)
-  echo "$(tput setaf 3)Starting Download please wait"
-  
-  curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-  
-  sudo apt-get install -y nodejs
+  if ! command -v node &> /dev/null
+    then
+    echo "Go to startup option and select nodejs then restart server!"
+    exit
+  fi
 ;;
   11)
   echo "$(tput setaf 3)Starting Download please wait"
