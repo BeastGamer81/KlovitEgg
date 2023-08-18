@@ -31,6 +31,11 @@ echo "eula=true" > eula.txt
 }
 
 function launchJavaServer {
+  if [ ! "$(command -v java)" ]; then
+    echo "Java is missing! Please ensure the 'Java' Docker image is selected in the startup options and then restart the server."
+    sleep 5
+    exit
+  fi
   java -Xms1024M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui
 }
 
@@ -39,6 +44,11 @@ function launchPMMPServer {
 }
 
 function launchNodeServer {
+    if [ ! "$(command -v node)" ]; then
+      echo "Node.js is missing! Please ensure the 'NodeJS' Docker image is selected in the startup options and then restart the server."
+      sleep 5
+      exit
+    fi
     if [ -n "$NODE_DEFAULT_ACTION" ]; then
       action="$NODE_DEFAULT_ACTION"
     else
@@ -52,7 +62,12 @@ function launchNodeServer {
       1)
         if [[ "${NODE_MAIN_FILE}" == "*.js" ]]; then
         node "${NODE_MAIN_FILE}"
-        else 
+        else
+        if [ ! "$(command -v ts-node)" ]; then
+          echo "ts-nods is missing! Your selected nodejs version doesn't support ts-node."
+          sleep 5
+          exit
+        fi
         ts-node "${NODE_MAIN_FILE}"
         fi
       ;;
@@ -281,11 +296,6 @@ case $n in
     
   ;;
   10)
-  if [ ! "$(command -v node)" ]; then
-    echo "Node.js is missing! Please ensure the 'nodejs' Docker image is selected in the startup options and then restart the server."
-    sleep 10
-    exit
-  fi
   echo "$(tput setaf 3)Starting Download please wait"
   touch nodejs
   
