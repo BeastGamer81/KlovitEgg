@@ -320,5 +320,6 @@ elif [ -f "nodejs" ]; then
         echo "Error 404"
         exit
       ;;
+      esac
 fi
 fi
