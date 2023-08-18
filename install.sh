@@ -30,6 +30,27 @@ fi
 echo "eula=true" > eula.txt
 }
 
+# Install functions
+
+function installPhp {
+if [[ "${PMMP_VERSION}" == "PM4" ]]; then
+  REQUIRED_PHP_VERSION="8.1"
+  DOWNLOAD_LINK="https://github.com/pmmp/PocketMine-MP/releases/download/4.23.5/PocketMine-MP.phar"
+elif [[ "${PMMP_VERSION}" == "PM5" ]]; then
+   REQUIRED_PHP_VERSION="8.1"
+   DOWNLOAD_LINK="https://github.com/pmmp/PocketMine-MP/releases/download/5.4.2/PocketMine-MP.phar"
+else
+  printf "Unsupported version: %s" "${PMMP_VERSION}"
+  exit 1
+fi
+
+curl --location --progress-bar https://github.com/pmmp/PHP-Binaries/releases/download/php-"$REQUIRED_PHP_VERSION"-latest/PHP-Linux-x86_64-"$PMMP_VERSION".tar.gz | tar -xzv
+EXTENSION_DIR=$(find "bin" -name '*debug-zts*')
+grep -q '^extension_dir' bin/php7/bin/php.ini && sed -i'bak' "s{^extension_dir=.*{extension_dir=\"$EXTENSION_DIR\"{" bin/php7/bin/php.ini || echo "extension_dir=\"$EXTENSION_DIR\"" >>bin/php7/bin/php.ini
+}
+
+# Launch functions
+
 function launchJavaServer {
   if [ ! "$(command -v java)" ]; then
     echo "Java is missing! Please ensure the 'Java' Docker image is selected in the startup options and then restart the server."
@@ -40,6 +61,12 @@ function launchJavaServer {
 }
 
 function launchPMMPServer {
+  if [ ! "$(command -v ./bin/php7/bin/php)" ]; then
+    echo "Php not found, installing Php..."
+    sleep 5
+    installPhp
+    sleep 5
+  fi
 ./bin/php7/bin/php ./PocketMine-MP.phar --no-wizard --disable-ansi
 }
 
@@ -310,20 +337,11 @@ case $n in
   11)
   echo "$(tput setaf 3)Starting Download please wait"
   
-  if [[ "${PMMP_VERSION}" == "PM4" ]]; then
-  REQUIRED_PHP_VERSION="8.1"
-  DOWNLOAD_LINK="https://github.com/pmmp/PocketMine-MP/releases/download/4.23.5/PocketMine-MP.phar"
-
-  elif [[ "${PMMP_VERSION}" == "PM5" ]]; then
-   REQUIRED_PHP_VERSION="8.1"
-   DOWNLOAD_LINK="https://github.com/pmmp/PocketMine-MP/releases/download/5.4.2/PocketMine-MP.phar"
-  else
-  printf "Unsupported version: %s" "${PMMP_VERSION}"
-  exit 1
+  if [ ! "$(command -v ./bin/php7/bin/php)" ]; then
+    installPhp
+    sleep 5
   fi
-  curl --location --progress-bar https://github.com/pmmp/PHP-Binaries/releases/download/php-"$REQUIRED_PHP_VERSION"-latest/PHP-Linux-x86_64-"$PMMP_VERSION".tar.gz | tar -xzv
-  EXTENSION_DIR=$(find "bin" -name '*debug-zts*')
-  grep -q '^extension_dir' bin/php7/bin/php.ini && sed -i'bak' "s{^extension_dir=.*{extension_dir=\"$EXTENSION_DIR\"{" bin/php7/bin/php.ini || echo "extension_dir=\"$EXTENSION_DIR\"" >>bin/php7/bin/php.ini
+  
   curl --location --progress-bar "${DOWNLOAD_LINK}" --output PocketMine-MP.phar
   launchPMMPServer
   ;;
