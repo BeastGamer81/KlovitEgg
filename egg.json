@@ -67,6 +67,15 @@
             "user_editable": true,
             "rules": "required|string",
             "field_type": "text"
+        },
+        {
+            "name": "NodeJS Default action",
+            "description": "Default action to use when nodejs server is used.",
+            "env_variable": "NODE_DEFAULT_ACTION",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:1"
         }
     ]
 }

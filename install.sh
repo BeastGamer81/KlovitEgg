@@ -38,6 +38,34 @@ function launchPMMPServer {
 ./bin/php7/bin/php ./PocketMine-MP.phar --no-wizard --disable-ansi
 }
 
+function launchNodeServer {
+    if [ -n "$NODE_DEFAULT_ACTION" ]; then
+      action="$NODE_DEFAULT_ACTION"
+    else
+      echo "
+      $(tput setaf 3)What to run?
+      1) Run main file      2) Install packages from package.json
+        "
+      read -r action
+    fi
+    case $action in
+      1)
+        if [[ "${NODE_MAIN_FILE}" == "*.js" ]]; then
+        node "${NODE_MAIN_FILE}"
+        else 
+        ts-node "${NODE_MAIN_FILE}"
+        fi
+      ;;
+      2)
+        npm install
+      ;;
+      *) 
+        echo "Error 404"
+        exit
+      ;;
+    esac
+}
+
 function optimizeJavaServer {
   echo "view-distance=6" >> server.properties
   
@@ -253,9 +281,9 @@ case $n in
     
   ;;
   10)
-  if ! command -v node &> /dev/null
-    then
-    echo "Go to startup option and select nodejs then restart server!"
+  if [ ! "$(command -v node)" ]; then
+    echo "Node.js is missing! Please ensure the 'nodejs' Docker image is selected in the startup options and then restart the server."
+    sleep 10
     exit
   fi
   echo "$(tput setaf 3)Starting Download please wait"
@@ -267,7 +295,7 @@ case $n in
 
   echo -e ""
   
-  node $NODE_MAIN_FILE
+  launchNodeServer
 ;;
   11)
   echo "$(tput setaf 3)Starting Download please wait"
@@ -304,22 +332,6 @@ elif [ -f "PocketMine-MP.phar" ]; then
     launchPMMPServer
 elif [ -f "nodejs" ]; then
     display
-    echo "
-      $(tput setaf 3)What to run?
-      1) Run main file      2) Install packages from package.json
-  "
-    read -r action
-    case $action in
-      1)
-        node $NODE_MAIN_FILE
-      ;;
-      2)
-        npm install
-      ;;
-      *) 
-        echo "Error 404"
-        exit
-      ;;
-      esac
+    launchNodeServer
 fi
 fi
