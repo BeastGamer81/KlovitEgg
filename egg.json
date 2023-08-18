@@ -49,46 +49,6 @@
             "field_type": "text"
         },
         {
-            "name": "Server Jar File",
-            "description": "The name of the server jarfile to run the server with.",
-            "env_variable": "SERVER_JARFILE",
-            "default_value": "server.jar",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|string|max:20",
-            "field_type": "text"
-        },
-        {
-            "name": "Download Path",
-            "description": "The build number for the paper release. Leave at latest to always get the latest version. Invalid versions will default to latest.",
-            "env_variable": "DL_PATH",
-            "default_value": "",
-            "user_viewable": false,
-            "user_editable": false,
-            "rules": "nullable|string|max:20",
-            "field_type": "text"
-        },
-        {
-            "name": "Build Number",
-            "description": "The build number for the paper release.\\r\\n\\r\\nLeave at latest to always get the latest version. Invalid versions will default to latest.",
-            "env_variable": "BUILD_NUMBER",
-            "default_value": "latest",
-            "user_viewable": true,
-            "user_editable": false,
-            "rules": "required|string|max:20",
-            "field_type": "text"
-        },
-        {
-            "name": "NodeJS Version",
-            "description": "NodeJS version",
-            "env_variable": "NODEJS_VERSION",
-            "default_value": "14",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "nullable|string|max:20",
-            "field_type": "text"
-        },
-        {
             "name": "PMMP Version",
             "description": "Latest PocketMine version to install.",
             "env_variable": "PMMP_VERSION",
@@ -97,6 +57,16 @@
             "user_editable": true,
             "rules": "required|string|in:PM5,PM4",
             "field_type": "text"
-        }
+        },
+        {
+            "name": "NodeJS Main file",
+            "description": "The file that starts the app.\r\nCan be .js and .ts",
+            "env_variable": "NODE_MAIN_FILE",
+            "default_value": "index.js",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string",
+            "field_type": "text"
+        },
     ]
 }
