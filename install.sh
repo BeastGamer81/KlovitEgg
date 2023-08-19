@@ -31,6 +31,12 @@ echo "eula=true" > eula.txt
 }
 
 # Install functions
+function installJq {
+mkdir -p tmp
+curl -o tmp/jq -L https://github.com/jqlang/jq/releases/download/jq-1.6/jq-linux64
+chmod +x tmp/jq
+jq=tmp/jq
+}
 
 function installPhp {
 if [[ "${PMMP_VERSION}" == "PM4" ]]; then
@@ -49,14 +55,54 @@ EXTENSION_DIR=$(find "bin" -name '*debug-zts*')
 grep -q '^extension_dir' bin/php7/bin/php.ini && sed -i'bak' "s{^extension_dir=.*{extension_dir=\"$EXTENSION_DIR\"{" bin/php7/bin/php.ini || echo "extension_dir=\"$EXTENSION_DIR\"" >>bin/php7/bin/php.ini
 }
 
-# Launch functions
+# Info functions
+function getJavaVersion {
+    java_version_output=$(java -version 2>&1)
 
-function launchJavaServer {
-  if [ ! "$(command -v java)" ]; then
-    echo "Java is missing! Please ensure the 'Java' Docker image is selected in the startup options and then restart the server."
-    sleep 5
+    if [[ $java_version_output == *"1.8"* ]]; then
+        echo "8"
+    elif [[ $java_version_output == *"11"* ]]; then
+        echo "11"
+    elif [[ $java_version_output == *"16"* ]]; then
+        echo "16"
+    elif [[ $java_version_output == *"17"* ]]; then
+        echo "17"
+    else
+        echo "error"
+    fi
+}
+
+# Validation functions
+function validateJavaVersion {
+    if [ ! "$(command -v java)" ]; then
+      echo "Java is missing! Please ensure the 'Java' Docker image is selected in the startup options and then restart the server."
+      sleep 5
+      exit
+    fi
+
+    JAVA_VERSION=$(getJavaVersion)
+    
+    MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
+    
+    if [ "$MINECRAFT_VERSION_CODE" -ge "118" ]; then
+    if [ "$JAVA_VERSION" -lt "17" ]; then
+    echo "$(tput setaf 1)Invalid docker image. Change it to Java 17"
+    sleep 10
     exit
-  fi
+    fi
+    elif [ "$MINECRAFT_VERSION_CODE" -ge "117" ]; then
+    if [ "$JAVA_VERSION" -lt "16" ]; then
+    echo "$(tput setaf 1)Invalid docker image. Change it to Java 16 or Java 17"
+    sleep 10
+    exit
+    fi
+    fi
+}
+
+# Launch functions
+function launchJavaServer {
+  validateJavaVersion
+
   java -Xms1024M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui
 }
 
@@ -118,11 +164,8 @@ if [ ! -f "server.jar" ] && [ ! -f "nodejs" ] && [ ! -f "PocketMine-MP.phar" ]; 
 sleep 5
 echo "
   $(tput setaf 3)Which platform are you gonna use?
-  1) Paper 1.8.8       6)  Paper 1.18.2        11) PocketmineMP
-  2) Paper 1.12.2      7)  Paper 1.19.2
-  3) Paper 1.15.2      8)  Paper 1.20.1
-  4) Paper 1.16.5      9)  BungeeCord
-  5) Paper 1.17.1      10)  Node.js
+  1) Paper             2) BungeeCord
+  3) PocketmineMP    4) Node.js
   "
 read -r n
 
@@ -130,19 +173,29 @@ case $n in
   1) 
     sleep 1
 
-    echo "$(tput setaf 3)Starting the download for 1.8.8 please wait"
+    echo "$(tput setaf 3)Starting the download for ${MINECRAFT_VERSION} please wait"
 
     sleep 4
 
     forceStuffs
 
-    curl -o server.jar https://api.papermc.io/v2/projects/paper/versions/1.8.8/builds/445/downloads/paper-1.8.8-445.jar
+    VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
+	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r '.versions' | $jq -r '.[-1]')
+
+	if [ "${VER_EXISTS}" == "true" ]; then
+		echo -e "Version is valid. Using version ${MINECRAFT_VERSION}"
+	else
+		echo -e "Specified version not found. Defaulting to the latest paper version"
+		MINECRAFT_VERSION=${LATEST_VERSION}
+	fi
+	
+	BUILD_NUMBER=$(curl -s https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION} | $jq -r '.builds' | $jq -r '.[-1]')
+	JAR_NAME=paper-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
+	DOWNLOAD_URL=https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
+	
+	curl -o server.jar "${DOWNLOAD_URL}"
 
     display
-    
-    echo "$(tput setaf 1)Invalid docker image. Change it to java 8"
-    
-    sleep 10
     
     echo -e ""
     
@@ -150,165 +203,7 @@ case $n in
     launchJavaServer
     forcestuffs
   ;;
-
-  2) 
-    sleep 1
-
-    echo "$(tput setaf 3)Starting the download for 1.12.2 please wait"
-
-    sleep 4
-
-    forceStuffs
-
-    curl -o server.jar https://api.papermc.io/v2/projects/paper/versions/1.12.2/builds/1620/downloads/paper-1.12.2-1620.jar
-
-    display   
-
-    echo "$(tput setaf 1)Invalid docker image, otherwise it will not work.Change it to java 11"
-    
-    sleep 10
-
-    echo -e ""
-
-    optimizeJavaServer
-    launchJavaServer
-    forcestuffs
-  ;;
-
-  3) 
-    sleep 1
-
-    echo "$(tput setaf 3)Starting the download for 1.15.2 please wait"
-
-    sleep 4
-
-    forceStuffs
-
-    curl -o server.jar https://api.papermc.io/v2/projects/paper/versions/1.15.2/builds/393/downloads/paper-1.15.2-393.jar
-
-    display   
-
-    echo "$(tput setaf 1)Invalid docker image. Change it to java 16"
-    
-    sleep 10
-
-    echo -e ""
-
-    optimizeJavaServer
-    launchJavaServer
-    forcestuffs
-  ;;
-
-  4)
-    sleep 1
-
-    echo "$(tput setaf 3)Starting the download for 1.16.5 please wait"
-
-    sleep 4
-
-    forceStuffs
-
-    curl -o server.jar https://api.papermc.io/v2/projects/paper/versions/1.16.5/builds/794/downloads/paper-1.16.5-794.jar
-
-    display
-    
-    echo "$(tput setaf 1)Invalid docker image. Change it to java 16"
-
-    sleep 10
-
-    echo -e ""
-
-    optimizeJavaServer
-    launchJavaServer
-    forcestuffs
-  ;;
-
-  5) 
-    sleep 1
-
-    echo "$(tput setaf 3)Starting the download for 1.17.1 please wait"
-
-    sleep 4
-
-    forceStuffs
-
-    curl -o server.jar https://api.papermc.io/v2/projects/paper/versions/1.17.1/builds/411/downloads/paper-1.17.1-411.jar
-
-    display
-
-    sleep 10
-
-    echo -e ""
-
-    optimizeJavaServer
-    launchJavaServer
-    forcestuffs
-  ;;
-
-  6)
-    sleep 1
-
-    echo "$(tput setaf 3)Starting the download for 1.18.2 please wait"
-
-    sleep 4
-
-    forceStuffs
-
-    curl -o server.jar https://api.papermc.io/v2/projects/paper/versions/1.18.2/builds/388/downloads/paper-1.18.2-388.jar
-
-    display
-
-    sleep 10
-
-    echo -e ""
-
-    optimizeJavaServer
-    launchJavaServer
-    forcestuffs
-  ;;
-  7)
-    sleep 1
-
-    echo "$(tput setaf 3)Starting the download for 1.19.2 please wait"
-
-    sleep 4
-
-    forceStuffs
-
-    curl -o server.jar https://api.papermc.io/v2/projects/paper/versions/1.19.2/builds/190/downloads/paper-1.19.2-190.jar
-
-    display
-
-    sleep 10
-
-    echo -e ""
-
-    optimizeJavaServer
-    launchJavaServer
-    forcestuffs
-    ;;
-  8)
-    sleep 1
-
-    echo "$(tput setaf 3)Starting the download for 1.20.1 please wait"
-
-    sleep 4
-
-    forceStuffs
-
-    curl -o server.jar https://api.papermc.io/v2/projects/paper/versions/1.20.1/builds/126/downloads/paper-1.20.1-126.jar
-
-    display
-
-    sleep 10
-
-    echo -e ""
-
-    optimizeJavaServer
-    launchJavaServer
-    forcestuffs
-    ;;
-  9)
+  2)
     echo "$(tput setaf 3)Starting Download please wait"
 
     curl -o server.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
@@ -322,7 +217,18 @@ case $n in
     java -Xms512M -Xmx512M -jar server.jar
     
   ;;
-  10)
+  3)
+  echo "$(tput setaf 3)Starting Download please wait"
+  
+  if [ ! "$(command -v ./bin/php7/bin/php)" ]; then
+    installPhp
+    sleep 5
+  fi
+  
+  curl --location --progress-bar "${DOWNLOAD_LINK}" --output PocketMine-MP.phar
+  launchPMMPServer
+  ;;
+  4)
   echo "$(tput setaf 3)Starting Download please wait"
   touch nodejs
   
@@ -333,17 +239,6 @@ case $n in
   echo -e ""
   
   launchNodeServer
-;;
-  11)
-  echo "$(tput setaf 3)Starting Download please wait"
-  
-  if [ ! "$(command -v ./bin/php7/bin/php)" ]; then
-    installPhp
-    sleep 5
-  fi
-  
-  curl --location --progress-bar "${DOWNLOAD_LINK}" --output PocketMine-MP.phar
-  launchPMMPServer
   ;;
   *) 
     echo "Error 404"
