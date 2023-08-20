@@ -180,8 +180,9 @@ if [ ! -e "server.jar" ] && [ ! -e "nodejs" ] && [ ! -e "PocketMine-MP.phar" ]; 
 sleep 5
 echo "
   $(tput setaf 3)Which platform are you gonna use?
-  1) Paper             2) BungeeCord
-  3) PocketmineMP    4) Node.js
+  1) Paper             2) Purpur
+  3) BungeeCord        4) PocketmineMP
+  5) Node.js
   "
 read -r n
 
@@ -222,6 +223,41 @@ case $n in
     forcestuffs
   ;;
   2)
+    sleep 1
+
+    echo "$(tput setaf 3)Starting the download for ${MINECRAFT_VERSION} please wait"
+
+    sleep 4
+
+    forceStuffs
+    
+    installJq
+    
+    VER_EXISTS=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep true)
+	LATEST_VERSION=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r '.versions' | jq -r '.[-1]')
+
+	if [ "${VER_EXISTS}" == "true" ]; then
+		echo -e "Version is valid. Using version ${MINECRAFT_VERSION}"
+	else
+		echo -e "Specified version not found. Defaulting to the latest paper version"
+		MINECRAFT_VERSION=${LATEST_VERSION}
+	fi
+	
+	BUILD_NUMBER=$(curl -s https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION} | jq -r '.builds.latest')
+	JAR_NAME=purpur-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
+	DOWNLOAD_URL=https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION}/${BUILD_NUMBER}/download
+	
+	curl -o server.jar "${DOWNLOAD_URL}"
+
+    display
+    
+    echo -e ""
+    
+    optimizeJavaServer
+    launchJavaServer
+    forcestuffs
+  ;;
+  3)
     echo "$(tput setaf 3)Starting Download please wait"
 
     curl -o server.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
@@ -235,7 +271,7 @@ case $n in
     java -Xms512M -Xmx512M -jar server.jar
     
   ;;
-  3)
+  4)
   echo "$(tput setaf 3)Starting Download please wait"
   
   if [ ! "$(command -v ./bin/php7/bin/php)" ]; then
@@ -246,7 +282,7 @@ case $n in
   curl --location --progress-bar "${DOWNLOAD_LINK}" --output PocketMine-MP.phar
   launchPMMPServer
   ;;
-  4)
+  5)
   echo "$(tput setaf 3)Starting Download please wait"
   touch nodejs
   
