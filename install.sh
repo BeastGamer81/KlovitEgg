@@ -220,7 +220,7 @@ case $n in
     
     optimizeJavaServer
     launchJavaServer
-    forcestuffs
+    forceStuffs
   ;;
   2)
     sleep 1
@@ -233,17 +233,17 @@ case $n in
     
     installJq
     
-    VER_EXISTS=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep true)
-	LATEST_VERSION=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r '.versions' | jq -r '.[-1]')
+    VER_EXISTS=$(curl -s https://api.purpurmc.org/v2/purpur | $jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep true)
+	LATEST_VERSION=$(curl -s https://api.purpurmc.org/v2/purpur | $jq -r '.versions' | $jq -r '.[-1]')
 
 	if [ "${VER_EXISTS}" == "true" ]; then
 		echo -e "Version is valid. Using version ${MINECRAFT_VERSION}"
 	else
-		echo -e "Specified version not found. Defaulting to the latest paper version"
+		echo -e "Specified version not found. Defaulting to the latest purpur version"
 		MINECRAFT_VERSION=${LATEST_VERSION}
 	fi
 	
-	BUILD_NUMBER=$(curl -s https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION} | jq -r '.builds.latest')
+	BUILD_NUMBER=$(curl -s https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION} | $jq -r '.builds.latest')
 	JAR_NAME=purpur-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
 	DOWNLOAD_URL=https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION}/${BUILD_NUMBER}/download
 	
@@ -255,7 +255,7 @@ case $n in
     
     optimizeJavaServer
     launchJavaServer
-    forcestuffs
+    forceStuffs
   ;;
   3)
     echo "$(tput setaf 3)Starting Download please wait"
