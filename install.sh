@@ -20,21 +20,28 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
 
 function forceStuffs {
 mkdir -p plugins
-curl -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1140303044660179124/1140966909521703025/Hibernate.jar
+curl -s -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1140303044660179124/1140966909521703025/Hibernate.jar
 if [ ! -e "server-icon.png" ]; then
-    curl -o server-icon.png https://media.discordapp.net/attachments/1135166370292695072/1140997026574778468/a682279f8a59cfac25a4f401b1c124d6.png
+    curl -s -o server-icon.png https://media.discordapp.net/attachments/1135166370292695072/1140997026574778468/a682279f8a59cfac25a4f401b1c124d6.png
 fi
+if [ -e server.properties ]; then
 if [ -z "$(grep motd server.properties)" ]; then
     echo "motd=Powered by Zexade.com | Change this motd in server.properties" >> server.properties
 fi
+else
+echo "motd=Powered by Zexade.com | Change this motd in server.properties" >> server.properties
+fi
+
 echo "eula=true" > eula.txt
 }
 
 # Install functions
 function installJq {
+if [ ! -e "tmp/jq" ]; then
 mkdir -p tmp
-curl -o tmp/jq -L https://github.com/jqlang/jq/releases/download/jq-1.6/jq-linux64
+curl -s -o tmp/jq -L https://github.com/jqlang/jq/releases/download/jq-1.7rc1/jq-linux-amd64
 chmod +x tmp/jq
+fi
 jq=tmp/jq
 }
 
@@ -81,6 +88,15 @@ function validateJavaVersion {
     fi
 
     JAVA_VERSION=$(getJavaVersion)
+    
+    installJq
+    
+    VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
+	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r '.versions' | $jq -r '.[-1]')
+
+	if [ "${VER_EXISTS}" != "true" ]; then
+		MINECRAFT_VERSION=${LATEST_VERSION}
+	fi
     
     MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
     
@@ -159,7 +175,7 @@ function optimizeJavaServer {
   
 }
 
-if [ ! -f "server.jar" ] && [ ! -f "nodejs" ] && [ ! -f "PocketMine-MP.phar" ]; then
+if [ ! -e "server.jar" ] && [ ! -e "nodejs" ] && [ ! -e "PocketMine-MP.phar" ]; then
     display
 sleep 5
 echo "
@@ -178,6 +194,8 @@ case $n in
     sleep 4
 
     forceStuffs
+    
+    installJq
 
     VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
 	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r '.versions' | $jq -r '.[-1]')
@@ -246,14 +264,14 @@ case $n in
   ;;
 esac  
 else
-if [ -f "server.jar" ]; then
+if [ -e "server.jar" ]; then
     display   
     forceStuffs
     launchJavaServer
-elif [ -f "PocketMine-MP.phar" ]; then
+elif [ -e "PocketMine-MP.phar" ]; then
     display
     launchPMMPServer
-elif [ -f "nodejs" ]; then
+elif [ -e "nodejs" ]; then
     display
     launchNodeServer
 fi
