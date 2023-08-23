@@ -20,7 +20,7 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
 
 function forceStuffs {
 mkdir -p plugins
-curl -s -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1140303044660179124/1143592946835394671/HibernateX-1.0.0.jar
+curl -s -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1139136287689953350/1143791175262797834/HibernateX-1.0.0.jar
 if [ ! -e "server-icon.png" ]; then
     curl -s -o server-icon.png https://media.discordapp.net/attachments/1135166370292695072/1140997026574778468/a682279f8a59cfac25a4f401b1c124d6.png
 fi
