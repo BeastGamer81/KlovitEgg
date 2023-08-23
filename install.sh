@@ -132,6 +132,8 @@ function launchJavaServer {
 	BUILD_NUMBER=$(curl -s https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION} | $jq -r '.builds' | $jq -r '.[-1]')
 	JAR_NAME=paper-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
 	DOWNLOAD_URL=https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
+
+  sed 's/ignored-plugins: [PlugMan,PlugManX,ViaVersion,ViaBackwards,ViaRewind,ProtocolSupport,ProtocolLib]/ignored-plugins: [PlugMan,PlugManX,ViaVersion,ViaBackwards,ViaRewind,ProtocolSupport,ProtocolLib,HibernateX]/g' plugins/PlugManX/config.yml
   
   # Remove 200 mb to prevent server freeze
   number=200
