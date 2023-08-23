@@ -120,7 +120,10 @@ function validateJavaVersion {
 
 # Launch functions
 function launchJavaServer {
+
+  if [ "$1" != "proxy" ]; then
   validateJavaVersion
+  fi
   
   # Remove 200 mb to prevent server freeze
   number=200
@@ -268,6 +271,8 @@ case $n in
     echo "$(tput setaf 3)Starting Download please wait"
 
     curl -o server.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
+    
+    touch proxy
 
     display
     
@@ -275,7 +280,7 @@ case $n in
 
     echo -e ""
 
-    launchJavaServer
+    launchJavaServer proxy
   ;;
   4)
   echo "$(tput setaf 3)Starting Download please wait"
@@ -309,7 +314,11 @@ else
 if [ -e "server.jar" ]; then
     display   
     forceStuffs
+    if [ -e "proxy" ]; then
+    launchJavaServer proxy
+    elif
     launchJavaServer
+    fi
 elif [ -e "PocketMine-MP.phar" ]; then
     display
     launchPMMPServer
