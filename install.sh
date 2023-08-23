@@ -45,6 +45,8 @@ fi
 }
 
 function installPhp {
+installJq
+
 REQUIRED_PHP_VERSION=$(curl -sSL https://update.pmmp.io/api?channel="$1" | jq -r '.php_version')
 
 PMMP_VERSION="$2"
@@ -204,7 +206,7 @@ case $n in
   1) 
     sleep 1
 
-    echo "$(tput setaf 3)Starting the download for ${MINECRAFT_VERSION} please wait"
+    echo "$(tput setaf 3)Starting the download for PaperMC ${MINECRAFT_VERSION} please wait"
 
     sleep 4
 
@@ -239,7 +241,7 @@ case $n in
   2)
     sleep 1
 
-    echo "$(tput setaf 3)Starting the download for ${MINECRAFT_VERSION} please wait"
+    echo "$(tput setaf 3)Starting the download for PurpurMC ${MINECRAFT_VERSION} please wait"
 
     sleep 4
 
@@ -272,7 +274,11 @@ case $n in
     forceStuffs
   ;;
   3)
-    echo "$(tput setaf 3)Starting Download please wait"
+    sleep 1
+    
+    echo "$(tput setaf 3)Starting the download for Bungeecord latest please wait"
+    
+    sleep 4
 
     curl -o server.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
     
@@ -287,7 +293,11 @@ case $n in
     launchJavaServer proxy
   ;;
   4)
-  echo "$(tput setaf 3)Starting Download please wait"
+  sleep 1
+  
+  echo "$(tput setaf 3)Starting the download for PocketMine-MP ${PMMP_VERSION} please wait"
+  
+  sleep 4
   
   PMMP_VERSION="${PMMP_VERSION^^}"
   
@@ -305,9 +315,15 @@ case $n in
     sleep 5
   fi
   
+  installJq
+  
   DOWNLOAD_LINK=$(curl -sSL https://update.pmmp.io/api?channel="$API_CHANNEL" | jq -r '.download_url')
 
   curl --location --progress-bar "${DOWNLOAD_LINK}" --output PocketMine-MP.phar
+  
+  display
+    
+  echo -e ""
   
   launchPMMPServer
   ;;
