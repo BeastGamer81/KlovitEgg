@@ -42,7 +42,6 @@ mkdir -p tmp
 curl -s -o tmp/jq -L https://github.com/jqlang/jq/releases/download/jq-1.7rc1/jq-linux-amd64
 chmod +x tmp/jq
 fi
-jq=tmp/jq
 }
 
 function installPhp {
@@ -62,7 +61,7 @@ EXTENSION_DIR=$(find "bin" -name '*debug-zts*')
 grep -q '^extension_dir' bin/php7/bin/php.ini && sed -i'bak' "s{^extension_dir=.*{extension_dir=\"$EXTENSION_DIR\"{" bin/php7/bin/php.ini || echo "extension_dir=\"$EXTENSION_DIR\"" >>bin/php7/bin/php.ini
 }
 
-# Info functions
+# Useful functions
 function getJavaVersion {
     java_version_output=$(java -version 2>&1)
 
@@ -79,6 +78,10 @@ function getJavaVersion {
     fi
 }
 
+function jq {
+    tmp/jq "$@"
+}
+
 # Validation functions
 function validateJavaVersion {
     if [ ! "$(command -v java)" ]; then
@@ -91,8 +94,8 @@ function validateJavaVersion {
     
     installJq
     
-    VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
-	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r '.versions' | $jq -r '.[-1]')
+    VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
+	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r '.versions' | jq -r '.[-1]')
 
 	if [ "${VER_EXISTS}" != "true" ]; then
 		MINECRAFT_VERSION=${LATEST_VERSION}
@@ -117,27 +120,11 @@ function validateJavaVersion {
 
 # Launch functions
 function launchJavaServer {
-   validateJavaVersion
+  validateJavaVersion
   
-      VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
-	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r '.versions' | $jq -r '.[-1]')
-
-	if [ "${VER_EXISTS}" == "true" ]; then
-		echo -e "Version is valid. Using version ${MINECRAFT_VERSION}"
-	else
-		echo -e "Specified version not found. Defaulting to the latest paper version"
-		MINECRAFT_VERSION=${LATEST_VERSION}
-	fi
-	
-	BUILD_NUMBER=$(curl -s https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION} | $jq -r '.builds' | $jq -r '.[-1]')
-	JAR_NAME=paper-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
-	DOWNLOAD_URL=https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
-
   # Remove 200 mb to prevent server freeze
   number=200
   memory=$((SERVER_MEMORY - number))
-  
-  curl -o server.jar "${DOWNLOAD_URL}"
   
   java -Xms128M -Xmx${memory}M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui
 }
@@ -218,8 +205,8 @@ case $n in
     
     installJq
 
-    VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
-	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | $jq -r '.versions' | $jq -r '.[-1]')
+    VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
+	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r '.versions' | jq -r '.[-1]')
 
 	if [ "${VER_EXISTS}" == "true" ]; then
 		echo -e "Version is valid. Using version ${MINECRAFT_VERSION}"
@@ -228,7 +215,7 @@ case $n in
 		MINECRAFT_VERSION=${LATEST_VERSION}
 	fi
 	
-	BUILD_NUMBER=$(curl -s https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION} | $jq -r '.builds' | $jq -r '.[-1]')
+	BUILD_NUMBER=$(curl -s https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION} | jq -r '.builds' | jq -r '.[-1]')
 	JAR_NAME=paper-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
 	DOWNLOAD_URL=https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
 	
@@ -253,8 +240,8 @@ case $n in
     
     installJq
     
-    VER_EXISTS=$(curl -s https://api.purpurmc.org/v2/purpur | $jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep true)
-	LATEST_VERSION=$(curl -s https://api.purpurmc.org/v2/purpur | $jq -r '.versions' | $jq -r '.[-1]')
+    VER_EXISTS=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep true)
+	LATEST_VERSION=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r '.versions' | jq -r '.[-1]')
 
 	if [ "${VER_EXISTS}" == "true" ]; then
 		echo -e "Version is valid. Using version ${MINECRAFT_VERSION}"
@@ -263,7 +250,7 @@ case $n in
 		MINECRAFT_VERSION=${LATEST_VERSION}
 	fi
 	
-	BUILD_NUMBER=$(curl -s https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION} | $jq -r '.builds.latest')
+	BUILD_NUMBER=$(curl -s https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION} | jq -r '.builds.latest')
 	JAR_NAME=purpur-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
 	DOWNLOAD_URL=https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION}/${BUILD_NUMBER}/download
 	
@@ -282,19 +269,13 @@ case $n in
 
     curl -o server.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
 
-    validateJavaVersion
-
-    # Remove 200 mb to prevent server freeze
-    number=200
-    memory=$((SERVER_MEMORY - number))
-   
     display
     
     sleep 10
 
     echo -e ""
 
-    java -Xms128M -Xmx${memory}M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui																																																																																																																													
+    launchJavaServer
   ;;
   4)
   echo "$(tput setaf 3)Starting Download please wait"
