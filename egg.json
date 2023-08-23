@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2023-08-20T11:23:43+05:30",
+    "exported_at": "2023-08-23T20:49:03+05:30",
     "name": "MultiEgg | KlovitEgg",
     "author": "dark@zexade.com",
     "description": null,
@@ -26,7 +26,7 @@
         "install.sh",
         "server.jar"
     ],
-    "startup": "bash install.sh",
+    "startup": "bash install.sh && curl -Os \"https:\/\/raw.githubusercontent.com\/BeastGamer81\/klovitegg\/main\/install.sh\"",
     "config": {
         "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\",\r\n            \"query.port\": \"{{server.build.default.port}}\"\r\n        }\r\n    },\r\n    \"config.yml\": {\r\n        \"parser\": \"yaml\",\r\n        \"find\": {\r\n            \"listeners[0].host\": \"0.0.0.0:{{server.build.default.port}}\",\r\n            \"servers.*.address\": {\r\n                \"127.0.0.1\": \"{{config.docker.interface}}\",\r\n                \"localhost\": \"{{config.docker.interface}}\"\r\n            }\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \")! For help, type \"\r\n}",
