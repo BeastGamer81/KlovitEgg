@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function display {
+display() {
     echo -e "\033c"
     echo "
     ==========================================================================
@@ -18,7 +18,7 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
     "  
 }
 
-function forceStuffs {
+forceStuffs() {
 mkdir -p plugins
 curl -s -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1139136287689953350/1143819680025411594/HibernateX-1.0.1.jar
 if [ ! -e "server-icon.png" ]; then
@@ -36,7 +36,7 @@ echo "eula=true" > eula.txt
 }
 
 # Install functions
-function installJq {
+installJq() {
 if [ ! -e "tmp/jq" ]; then
 mkdir -p tmp
 curl -s -o tmp/jq -L https://github.com/jqlang/jq/releases/download/jq-1.7rc1/jq-linux-amd64
@@ -44,7 +44,7 @@ chmod +x tmp/jq
 fi
 }
 
-function installPhp {
+installPhp() {
 installJq
 
 REQUIRED_PHP_VERSION=$(curl -sSL https://update.pmmp.io/api?channel="$1" | jq -r '.php_version')
@@ -58,7 +58,7 @@ EXTENSION_DIR=$(find "bin" -name '*debug-zts*')
 }
 
 # Useful functions
-function getJavaVersion {
+getJavaVersion() {
     java_version_output=$(java -version 2>&1)
 
     if [[ $java_version_output == *"1.8"* ]]; then
@@ -74,12 +74,12 @@ function getJavaVersion {
     fi
 }
 
-function jq {
+jq() {
     tmp/jq "$@"
 }
 
 # Validation functions
-function validateJavaVersion {
+validateJavaVersion() {
     if [ ! "$(command -v java)" ]; then
       echo "Java is missing! Please ensure the 'Java' Docker image is selected in the startup options and then restart the server."
       sleep 5
@@ -115,7 +115,7 @@ function validateJavaVersion {
 }
 
 # Launch functions
-function launchJavaServer {
+launchJavaServer() {
 
   if [ "$1" != "proxy" ]; then
   validateJavaVersion
@@ -128,7 +128,7 @@ function launchJavaServer {
   java -Xms128M -Xmx${memory}M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui
 }
 
-function launchPMMPServer {
+launchPMMPServer() {
   if [ ! "$(command -v ./bin/php7/bin/php)" ]; then
     echo "Php not found, installing Php..."
     sleep 5
@@ -148,7 +148,7 @@ function launchPMMPServer {
 ./bin/php7/bin/php ./PocketMine-MP.phar --no-wizard --disable-ansi
 }
 
-function launchNodeServer {
+launchNodeServer() {
     if [ ! "$(command -v node)" ]; then
       echo "Node.js is missing! Please ensure the 'NodeJS' Docker image is selected in the startup options and then restart the server."
       sleep 5
@@ -186,7 +186,7 @@ function launchNodeServer {
     esac
 }
 
-function optimizeJavaServer {
+optimizeJavaServer() {
   echo "view-distance=6" >> server.properties
   
 }
