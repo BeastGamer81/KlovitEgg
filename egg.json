@@ -23,7 +23,8 @@
         "NodeJS 12": "ghcr.io\/parkervcp\/yolks:nodejs_12"
     },
     "file_denylist": [
-        "install.sh"
+        "install.sh",
+        "server.jar"
     ],
     "startup": "bash install.sh",
     "config": {
