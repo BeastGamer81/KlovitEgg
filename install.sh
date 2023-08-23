@@ -45,20 +45,14 @@ fi
 }
 
 function installPhp {
-if [[ "${PMMP_VERSION}" == "PM4" ]]; then
-  REQUIRED_PHP_VERSION="8.1"
-  DOWNLOAD_LINK="https://github.com/pmmp/PocketMine-MP/releases/download/4.23.5/PocketMine-MP.phar"
-elif [[ "${PMMP_VERSION}" == "PM5" ]]; then
-   REQUIRED_PHP_VERSION="8.1"
-   DOWNLOAD_LINK="https://github.com/pmmp/PocketMine-MP/releases/download/5.4.2/PocketMine-MP.phar"
-else
-  printf "Unsupported version: %s" "${PMMP_VERSION}"
-  exit 1
-fi
+REQUIRED_PHP_VERSION=$(curl -sSL https://update.pmmp.io/api?channel="$1" | jq -r '.php_version')
+
+PMMP_VERSION="$2"
 
 curl --location --progress-bar https://github.com/pmmp/PHP-Binaries/releases/download/php-"$REQUIRED_PHP_VERSION"-latest/PHP-Linux-x86_64-"$PMMP_VERSION".tar.gz | tar -xzv
+
 EXTENSION_DIR=$(find "bin" -name '*debug-zts*')
-grep -q '^extension_dir' bin/php7/bin/php.ini && sed -i'bak' "s{^extension_dir=.*{extension_dir=\"$EXTENSION_DIR\"{" bin/php7/bin/php.ini || echo "extension_dir=\"$EXTENSION_DIR\"" >>bin/php7/bin/php.ini
+  grep -q '^extension_dir' bin/php7/bin/php.ini && sed -i'bak' "s{^extension_dir=.*{extension_dir=\"$EXTENSION_DIR\"{" bin/php7/bin/php.ini || echo "extension_dir=\"$EXTENSION_DIR\"" >>bin/php7/bin/php.ini
 }
 
 # Useful functions
@@ -136,7 +130,17 @@ function launchPMMPServer {
   if [ ! "$(command -v ./bin/php7/bin/php)" ]; then
     echo "Php not found, installing Php..."
     sleep 5
-    installPhp
+    PMMP_VERSION="${PMMP_VERSION^^}"
+  
+    if [[ "${PMMP_VERSION}" == "PM4" ]]; then
+      API_CHANNEL="4"
+    elif [[ "${PMMP_VERSION}" == "PM5" ]]; then
+      API_CHANNEL="stable"
+    else
+      printf "Unsupported version: %s" "${PMMP_VERSION}"
+      exit 1
+    fi
+    installPhp "$API_CHANNEL" "$PMMP_VERSION"
     sleep 5
   fi
 ./bin/php7/bin/php ./PocketMine-MP.phar --no-wizard --disable-ansi
@@ -285,12 +289,26 @@ case $n in
   4)
   echo "$(tput setaf 3)Starting Download please wait"
   
+  PMMP_VERSION="${PMMP_VERSION^^}"
+  
+  if [[ "${PMMP_VERSION}" == "PM4" ]]; then
+    API_CHANNEL="4"
+  elif [[ "${PMMP_VERSION}" == "PM5" ]]; then
+     API_CHANNEL="stable"
+  else
+    printf "Unsupported version: %s" "${PMMP_VERSION}"
+    exit 1
+  fi
+  
   if [ ! "$(command -v ./bin/php7/bin/php)" ]; then
-    installPhp
+    installPhp "$API_CHANNEL" "$PMMP_VERSION"
     sleep 5
   fi
   
+  DOWNLOAD_LINK=$(curl -sSL https://update.pmmp.io/api?channel="$API_CHANNEL" | jq -r '.download_url')
+
   curl --location --progress-bar "${DOWNLOAD_LINK}" --output PocketMine-MP.phar
+  
   launchPMMPServer
   ;;
   5)
@@ -316,7 +334,7 @@ if [ -e "server.jar" ]; then
     forceStuffs
     if [ -e "proxy" ]; then
     launchJavaServer proxy
-    elif
+    else
     launchJavaServer
     fi
 elif [ -e "PocketMine-MP.phar" ]; then
