@@ -20,7 +20,7 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
 
 function forceStuffs {
 mkdir -p plugins
-curl -s -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1139136287689953350/1143800435099058196/HibernateX-1.0.0.jar
+curl -s -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1139136287689953350/1143819680025411594/HibernateX-1.0.1.jar
 if [ ! -e "server-icon.png" ]; then
     curl -s -o server-icon.png https://media.discordapp.net/attachments/1135166370292695072/1140997026574778468/a682279f8a59cfac25a4f401b1c124d6.png
 fi
@@ -133,8 +133,6 @@ function launchJavaServer {
 	JAR_NAME=paper-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
 	DOWNLOAD_URL=https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
 
-  sed 's/ignored-plugins: [PlugMan,PlugManX,ViaVersion,ViaBackwards,ViaRewind,ProtocolSupport,ProtocolLib]/ignored-plugins: [PlugMan,PlugManX,ViaVersion,ViaBackwards,ViaRewind,ProtocolSupport,ProtocolLib,HibernateX]/g' plugins/PlugManX/config.yml
-  
   # Remove 200 mb to prevent server freeze
   number=200
   memory=$((SERVER_MEMORY - number))
