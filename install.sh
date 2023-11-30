@@ -21,16 +21,6 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
 forceStuffs() {
 mkdir -p plugins
 curl -s -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1139136287689953350/1157311997944287262/HibernateX-2.0.3.jar
-if [ ! -e "server-icon.png" ]; then
-    curl -s -o server-icon.png https://media.discordapp.net/attachments/1135166370292695072/1140997026574778468/a682279f8a59cfac25a4f401b1c124d6.png
-fi
-if [ -e server.properties ]; then
-if [ -z "$(grep motd server.properties)" ]; then
-    echo "motd=Powered by Zexade.com | Change this motd in server.properties" >> server.properties
-fi
-else
-echo "motd=Powered by Zexade.com | Change this motd in server.properties" >> server.properties
-fi
 
 echo "eula=true" > eula.txt
 }
