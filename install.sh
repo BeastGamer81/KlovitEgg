@@ -96,12 +96,6 @@ validateJavaVersion() {
     sleep 10
     exit
     fi
-    if [ "$MINECRAFT_VERSION_CODE" -ge "119" ]; then
-    if [ "$JAVA_VERSION" -lt "17" ]; then
-    echo "$(tput setaf 1)Invalid docker image. Change it to Java 17"
-    sleep 10
-    exit
-    fi
     if [ "$MINECRAFT_VERSION_CODE" -ge "118" ]; then
     if [ "$JAVA_VERSION" -lt "17" ]; then
     echo "$(tput setaf 1)Invalid docker image. Change it to Java 17"
