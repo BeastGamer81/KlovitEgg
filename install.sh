@@ -59,6 +59,8 @@ getJavaVersion() {
         echo "16"
     elif [[ $java_version_output == *"17"* ]]; then
         echo "17"
+    elif [[ $java_version_output == *"18"* ]]; then
+        echo "18"
     else
         echo "error"
     fi
@@ -88,7 +90,18 @@ validateJavaVersion() {
 	fi
     
     MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
-    
+    if [ "$MINECRAFT_VERSION_CODE" -ge "120" ]; then
+    if [ "$JAVA_VERSION" -lt "20" ]; then
+    echo "$(tput setaf 1)Invalid docker image. Change it to Java 20"
+    sleep 10
+    exit
+    fi
+    if [ "$MINECRAFT_VERSION_CODE" -ge "119" ]; then
+    if [ "$JAVA_VERSION" -lt "17" ]; then
+    echo "$(tput setaf 1)Invalid docker image. Change it to Java 17"
+    sleep 10
+    exit
+    fi
     if [ "$MINECRAFT_VERSION_CODE" -ge "118" ]; then
     if [ "$JAVA_VERSION" -lt "17" ]; then
     echo "$(tput setaf 1)Invalid docker image. Change it to Java 17"
