@@ -12,7 +12,7 @@ $(tput setaf 6) ###      ##       ##  ##   ##  ##     ##       ##              #
 $(tput setaf 6) ####     ##       ##  ##   ##  ##     ##       ##              ##       ##  ##   ##  ##  
 $(tput setaf 6) ## ##    ##       ##  ##     ###      ##       ##              ##       ##  ##   ##  ##  
 $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              ######    ####     ####   
- 
+$(tput setaf 6) COPYRIGHT 2023 - 2024 Klovit & https://github.com/beastgamer81
 
     ==========================================================================
     "  
@@ -20,7 +20,7 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
 
 forceStuffs() {
 mkdir -p plugins
-curl -s -o plugins/hibo.jar https://cdn.discordapp.com/attachments/1139136287689953350/1157311997944287262/HibernateX-2.0.3.jar
+curl -s -o plugins/hibo.jar https://github.com/BeastGamer81/klovitegg/raw/main/HibernateX-2.0.3.jar
 
 echo "eula=true" > eula.txt
 }
