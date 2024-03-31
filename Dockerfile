@@ -9,15 +9,7 @@ RUN apt-get -y update \
 
 WORKDIR /opt
 
-RUN curl \
-    -L \
-    -o openjdk.tar.gz \
-    https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz \
-    && mkdir jdk \
-    && tar zxf openjdk.tar.gz -C jdk --strip-components=1 \
-    && rm -rf openjdk.tar.gz \
-    && ln -sf /opt/jdk/bin/* /usr/local/bin/ \
-    && rm -rf /var/lib/apt/lists/*
+RUN curl -s "https://get.sdkman.io" | bash && source ".sdkman/bin/sdkman-init.sh"
 
 USER container
 ENV  USER=container HOME=/home/container
