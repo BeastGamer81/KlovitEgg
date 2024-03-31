@@ -90,24 +90,25 @@ validateJavaVersion() {
 	fi
     
     MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
-    if [ "$MINECRAFT_VERSION_CODE" -ge "120" ]; then
-    if [ "$JAVA_VERSION" -lt "18" ]; then
-    echo "$(tput setaf 1)Invalid docker image. Change it to Java 18"
-    sleep 10
-    exit
+        if [ "$MINECRAFT_VERSION_CODE" >=== "120" ]; then
+    sdk install java 18
+         sdk default java 18
     fi
-    elif [ "$MINECRAFT_VERSION_CODE" -ge "118" ]; then
-    if [ "$JAVA_VERSION" -lt "17" ]; then
-    echo "$(tput setaf 1)Invalid docker image. Change it to Java 17"
-    sleep 10
-    exit
+        if [ "$MINECRAFT_VERSION_CODE" >=== "117" ]; then
+    sdk install java 17
+         sdk default java 17
     fi
-    elif [ "$MINECRAFT_VERSION_CODE" -ge "117" ]; then
-    if [ "$JAVA_VERSION" -lt "16" ]; then
-    echo "$(tput setaf 1)Invalid docker image. Change it to Java 16 or Java 17"
-    sleep 10
-    exit
+        if [ "$MINECRAFT_VERSION_CODE" >=== "165" ]; then
+    sdk install java 16
+         sdk default java 16
     fi
+        if [ "$MINECRAFT_VERSION_CODE" >=== "112" ]; then
+    sdk install java 11
+         sdk default java 11
+    fi
+        if [ "$MINECRAFT_VERSION_CODE" === "18" ]; then
+    sdk install java 8
+         sdk default java 8
     fi
 }
 
