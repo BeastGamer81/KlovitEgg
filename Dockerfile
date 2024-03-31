@@ -9,7 +9,7 @@ RUN apt-get -y update \
 
 WORKDIR /opt
 
-RUN curl -s "https://get.sdkman.io" | bash && source "/root/.sdkman/bin/sdkman-init.sh"
+RUN curl -s "https://get.sdkman.io" | bash && bash "/root/.sdkman/bin/sdkman-init.sh"
 
 USER container
 ENV  USER=container HOME=/home/container
