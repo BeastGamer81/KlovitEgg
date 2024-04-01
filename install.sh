@@ -84,27 +84,22 @@ jq() {
 	fi
     
     MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
-        if [ "$MINECRAFT_VERSION_CODE" >=== "120" ]; then
+if [ "$MINECRAFT_VERSION_CODE" -ge "120" ]; then
     sdk install java 18
-         sdk default java 18
-    fi
-        if [ "$MINECRAFT_VERSION_CODE" >=== "117" ]; then
+    sdk default java 18
+elif [ "$MINECRAFT_VERSION_CODE" -ge "117" ]; then
     sdk install java 17
-         sdk default java 17
-    fi
-        if [ "$MINECRAFT_VERSION_CODE" >=== "165" ]; then
+    sdk default java 17
+elif [ "$MINECRAFT_VERSION_CODE" -ge "165" ]; then
     sdk install java 16
-         sdk default java 16
-    fi
-        if [ "$MINECRAFT_VERSION_CODE" >=== "112" ]; then
+    sdk default java 16
+elif [ "$MINECRAFT_VERSION_CODE" -ge "112" ]; then
     sdk install java 11
-         sdk default java 11
-    fi
-        if [ "$MINECRAFT_VERSION_CODE" === "18" ]; then
+    sdk default java 11
+elif [ "$MINECRAFT_VERSION_CODE" -eq "18" ]; then
     sdk install java 8
-         sdk default java 8
-    fi
-}
+    sdk default java 8
+fi
 
 # Launch functions
 launchJavaServer() {
