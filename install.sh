@@ -33,6 +33,14 @@ curl -s -o tmp/jq -L https://github.com/jqlang/jq/releases/download/jq-1.7rc1/jq
 chmod +x tmp/jq
 fi
 }
+installsdkman() {
+if [ ! "$(command -v sdk)" ]; then
+curl -s "https://get.sdkman.io" | bash
+bash ".sdkman/bin/sdkman-init.sh"
+fi
+}
+
+
 
 installPhp() {
 installJq
@@ -75,7 +83,7 @@ jq() {
     JAVA_VERSION=$(getJavaVersion)
     
     installJq
-    
+    installsdkman
     VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
 	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r '.versions' | jq -r '.[-1]')
 
