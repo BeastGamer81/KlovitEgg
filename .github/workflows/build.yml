@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - docker
+      - beta
 jobs:
   push:
     name: 'klovitegg:beta'
