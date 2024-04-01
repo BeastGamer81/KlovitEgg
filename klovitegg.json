@@ -6,22 +6,11 @@
     },
     "exported_at": "2023-08-23T20:49:03+05:30",
     "name": "MultiEgg | KlovitEgg",
-    "author": "dark@zexade.com",
+    "author": "dark@klovit.tech",
     "description": null,
     "features": null,
     "docker_images": {
-        "Java 18": "ghcr.io\/pterodactyl\/yolks:java_18",
-        "Java 17": "ghcr.io\/pterodactyl\/yolks:java_17",
-        "Java 16": "ghcr.io\/pterodactyl\/yolks:java_16",
-        "Java 11": "ghcr.io\/pterodactyl\/yolks:java_11",
-        "Java 8": "ghcr.io\/pterodactyl\/yolks:java_8",
-        "NodeJS 20": "ghcr.io\/parkervcp\/yolks:nodejs_20",
-        "NodeJS 19": "ghcr.io\/parkervcp\/yolks:nodejs_19",
-        "NodeJS 18": "ghcr.io\/parkervcp\/yolks:nodejs_18",
-        "NodeJS 17": "ghcr.io\/parkervcp\/yolks:nodejs_17",
-        "NodeJS 16": "ghcr.io\/parkervcp\/yolks:nodejs_16",
-        "NodeJS 14": "ghcr.io\/parkervcp\/yolks:nodejs_14",
-        "NodeJS 12": "ghcr.io\/parkervcp\/yolks:nodejs_12"
+        "Klovit Egg": "ghcr.io\/beastgamer81\/klovitegg:latest"
     },
     "file_denylist": [
         "install.sh",
@@ -60,6 +49,16 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|in:PM5,PM4",
+            "field_type": "text"
+        },
+        {
+            "name": "Node Version",
+            "description": "The version of Node to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
+            "env_variable": "NODE_VERSION",
+            "default_value": "latest",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:20",
             "field_type": "text"
         },
         {

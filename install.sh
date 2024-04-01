@@ -1,7 +1,6 @@
 #!/bin/bash
 
 display() {
-    echo -e "\033c"
     echo "
     ==========================================================================
     
@@ -33,6 +32,14 @@ curl -s -o tmp/jq -L https://github.com/jqlang/jq/releases/download/jq-1.7rc1/jq
 chmod +x tmp/jq
 fi
 }
+installsdkman() {
+if [ ! "$(command -v sdk version)" ]; then
+curl -s "https://get.sdkman.io" | bash
+source ".sdkman/bin/sdkman-init.sh"
+fi
+}
+
+
 
 installPhp() {
 installJq
@@ -71,17 +78,11 @@ jq() {
 }
 
 # Validation functions
-validateJavaVersion() {
-    if [ ! "$(command -v java)" ]; then
-      echo "Java is missing! Please ensure the 'Java' Docker image is selected in the startup options and then restart the server."
-      sleep 5
-      exit
-    fi
 
     JAVA_VERSION=$(getJavaVersion)
     
     installJq
-    
+    installsdkman
     VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
 	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r '.versions' | jq -r '.[-1]')
 
@@ -90,39 +91,24 @@ validateJavaVersion() {
 	fi
     
     MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
-    if [ "$MINECRAFT_VERSION_CODE" -ge "120" ]; then
-    if [ "$JAVA_VERSION" -lt "18" ]; then
-    echo "$(tput setaf 1)Invalid docker image. Change it to Java 18"
-    sleep 10
-    exit
-    fi
-    elif [ "$MINECRAFT_VERSION_CODE" -ge "118" ]; then
-    if [ "$JAVA_VERSION" -lt "17" ]; then
-    echo "$(tput setaf 1)Invalid docker image. Change it to Java 17"
-    sleep 10
-    exit
-    fi
-    elif [ "$MINECRAFT_VERSION_CODE" -ge "117" ]; then
-    if [ "$JAVA_VERSION" -lt "16" ]; then
-    echo "$(tput setaf 1)Invalid docker image. Change it to Java 16 or Java 17"
-    sleep 10
-    exit
-    fi
-    fi
-}
+if [ "$MINECRAFT_VERSION_CODE" -ge "120" ]; then
+    sdk install java 21.0.2-tem
+elif [ "$MINECRAFT_VERSION_CODE" -ge "117" ]; then
+    sdk install java 17.0.0-tem
+elif [ "$MINECRAFT_VERSION_CODE" -ge "112" ]; then
+    sdk install java 11.0.22-tem
+elif [ "$MINECRAFT_VERSION_CODE" -eq "18" ]; then
+    sdk install java 8.0.392-tem
+fi
+
 
 # Launch functions
 launchJavaServer() {
-
-  if [ "$1" != "proxy" ]; then
-  validateJavaVersion
-  fi
   
   # Remove 200 mb to prevent server freeze
   number=200
   memory=$((SERVER_MEMORY - number))
-  
-  java -Xms128M -Xmx${memory}M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui
+  java -Xms128M -Xmx${memory}M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -DPaper.IgnoreJavaVersion=true -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui
 }
 
 launchPMMPServer() {
@@ -146,11 +132,13 @@ launchPMMPServer() {
 }
 
 launchNodeServer() {
-    if [ ! "$(command -v node)" ]; then
-      echo "Node.js is missing! Please ensure the 'NodeJS' Docker image is selected in the startup options and then restart the server."
-      sleep 5
-      exit
-    fi
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+    nvm install $NODE_VERSION
+    nvm use $NODE_VERSION
+    
     if [ -n "$NODE_DEFAULT_ACTION" ]; then
       action="$NODE_DEFAULT_ACTION"
     else
