@@ -71,12 +71,6 @@ jq() {
 }
 
 # Validation functions
-validateJavaVersion() {
-    if [ ! "$(command -v java)" ]; then
-      echo "Java is missing! Please ensure the 'Java' Docker image is selected in the startup options and then restart the server."
-      sleep 5
-      exit
-    fi
 
     JAVA_VERSION=$(getJavaVersion)
     
@@ -114,10 +108,6 @@ validateJavaVersion() {
 
 # Launch functions
 launchJavaServer() {
-
-  if [ "$1" != "proxy" ]; then
-  validateJavaVersion
-  fi
   
   # Remove 200 mb to prevent server freeze
   number=200
@@ -147,11 +137,6 @@ launchPMMPServer() {
 }
 
 launchNodeServer() {
-    if [ ! "$(command -v node)" ]; then
-      echo "Node.js is missing! Please ensure the 'NodeJS' Docker image is selected in the startup options and then restart the server."
-      sleep 5
-      exit
-    fi
     if [ -n "$NODE_DEFAULT_ACTION" ]; then
       action="$NODE_DEFAULT_ACTION"
     else
