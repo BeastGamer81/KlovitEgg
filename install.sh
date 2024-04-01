@@ -20,7 +20,7 @@ $(tput setaf 6) COPYRIGHT 2023 - 2024 Klovit & https://github.com/beastgamer81
 
 forceStuffs() {
 mkdir -p plugins
-curl -s -o plugins/hibo.jar https://github.com/BeastGamer81/klovitegg/raw/main/HibernateX-2.0.3.jar
+curl -s -o plugins/hibernate.jar https://raw.githubusercontent.com/beastgamer81/klovitegg/main/HibernateX-2.0.3.jar
 
 echo "eula=true" > eula.txt
 }
