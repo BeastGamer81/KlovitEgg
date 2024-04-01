@@ -86,6 +86,7 @@ jq() {
     MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
     echo "$MINECRAFT_VERSION_CODE"
 if [ "$MINECRAFT_VERSION_CODE" -ge "120" ]; then
+touch 120.txt
     sdk install java 21.0.2-tem
 elif [ "$MINECRAFT_VERSION_CODE" -ge "117" ]; then
     sdk install java 17.0.0-tem
