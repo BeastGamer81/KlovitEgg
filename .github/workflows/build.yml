@@ -3,10 +3,10 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - beta
+      - main
 jobs:
   push:
-    name: 'klovitegg:beta'
+    name: 'klovitegg:latest'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -28,4 +28,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/beastgamer81/klovitegg:beta
+            ghcr.io/beastgamer81/klovitegg:latest
