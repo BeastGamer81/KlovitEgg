@@ -93,7 +93,7 @@ jq() {
     MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
     echo "$MINECRAFT_VERSION_CODE"
 if [ "$MINECRAFT_VERSION_CODE" -ge "120" ]; then
-    sdk install java 21.0.2-tem > debug.txt
+    sdk install java 21.0.2-tem
 elif [ "$MINECRAFT_VERSION_CODE" -ge "117" ]; then
     sdk install java 17.0.0-tem
 elif [ "$MINECRAFT_VERSION_CODE" -ge "112" ]; then
@@ -132,6 +132,13 @@ launchPMMPServer() {
 }
 
 launchNodeServer() {
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+    nvm install $NODE_VERSION
+    nvm use $NODE_VERSION
+    
     if [ -n "$NODE_DEFAULT_ACTION" ]; then
       action="$NODE_DEFAULT_ACTION"
     else
