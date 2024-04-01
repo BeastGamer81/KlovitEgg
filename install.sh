@@ -33,9 +33,9 @@ chmod +x tmp/jq
 fi
 }
 installsdkman() {
-if [ ! "$(command -v sdk)" ]; then
+if [ ! "$(command -v sdk version)" ]; then
 curl -s "https://get.sdkman.io" | bash
-bash ".sdkman/bin/sdkman-init.sh"
+source ".sdkman/bin/sdkman-init.sh"
 fi
 }
 
