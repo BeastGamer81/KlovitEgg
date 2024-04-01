@@ -91,7 +91,6 @@ jq() {
 	fi
     
     MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
-    echo "$MINECRAFT_VERSION_CODE"
 if [ "$MINECRAFT_VERSION_CODE" -ge "120" ]; then
     sdk install java 21.0.2-tem
 elif [ "$MINECRAFT_VERSION_CODE" -ge "117" ]; then
@@ -101,6 +100,7 @@ elif [ "$MINECRAFT_VERSION_CODE" -ge "112" ]; then
 elif [ "$MINECRAFT_VERSION_CODE" -eq "18" ]; then
     sdk install java 8.0.392-tem
 fi
+
 
 # Launch functions
 launchJavaServer() {
