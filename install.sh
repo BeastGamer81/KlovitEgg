@@ -1,6 +1,7 @@
 #!/bin/bash
 
 display() {
+    echo -e "\033c"
     echo "
     ==========================================================================
     
@@ -19,19 +20,12 @@ $(tput setaf 6) COPYRIGHT 2023 - 2024 Klovit & https://github.com/beastgamer81
 
 forceStuffs() {
 mkdir -p plugins
-curl -s -o plugins/hibo.jar https://github.com/BeastGamer81/klovitegg/raw/main/HibernateX-2.0.3.jar
+curl -s -o plugins/hibernate.jar https://raw.githubusercontent.com/beastgamer81/klovitegg/main/HibernateX-2.0.3.jar
 
 echo "eula=true" > eula.txt
 }
 
 # Install functions
-installJq() {
-if [ ! -e "tmp/jq" ]; then
-mkdir -p tmp
-curl -s -o tmp/jq -L https://github.com/jqlang/jq/releases/download/jq-1.7rc1/jq-linux-amd64
-chmod +x tmp/jq
-fi
-}
 installsdkman() {
 if [ ! "$(command -v sdk version)" ]; then
 curl -s "https://get.sdkman.io" | bash
@@ -42,8 +36,6 @@ fi
 
 
 installPhp() {
-installJq
-
 REQUIRED_PHP_VERSION=$(curl -sSL https://update.pmmp.io/api?channel="$1" | jq -r '.php_version')
 
 PMMP_VERSION="$2"
@@ -72,16 +64,10 @@ getJavaVersion() {
         echo "error"
     fi
 }
-
-jq() {
-    tmp/jq "$@"
-}
-
 # Validation functions
 
     JAVA_VERSION=$(getJavaVersion)
     
-    installJq
     installsdkman
     VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
 	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r '.versions' | jq -r '.[-1]')
@@ -197,7 +183,6 @@ case $n in
 
     forceStuffs
     
-    installJq
 
     VER_EXISTS=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep -m1 true)
 	LATEST_VERSION=$(curl -s https://api.papermc.io/v2/projects/paper | jq -r '.versions' | jq -r '.[-1]')
@@ -232,7 +217,6 @@ case $n in
 
     forceStuffs
     
-    installJq
     
     VER_EXISTS=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep true)
 	LATEST_VERSION=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r '.versions' | jq -r '.[-1]')
@@ -300,7 +284,6 @@ case $n in
     sleep 5
   fi
   
-  installJq
   
   DOWNLOAD_LINK=$(curl -sSL https://update.pmmp.io/api?channel="$API_CHANNEL" | jq -r '.download_url')
 
