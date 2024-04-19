@@ -6,7 +6,7 @@
     },
     "exported_at": "2023-08-23T20:49:03+05:30",
     "name": "MultiEgg | KlovitEgg",
-    "author": "dark@klovit.tech",
+    "author": "faizp@klovit.tech",
     "description": null,
     "features": null,
     "docker_images": {
@@ -53,9 +53,9 @@
         },
         {
             "name": "Node Version",
-            "description": "The version of Node to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
+            "description": "The version of Node to download. Leave at 20 to get the NodeJS 20 version.",
             "env_variable": "NODE_VERSION",
-            "default_value": "latest",
+            "default_value": "20",
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:20",
