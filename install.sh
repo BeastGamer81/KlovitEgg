@@ -136,16 +136,7 @@ launchNodeServer() {
     fi
     case $action in
       1)
-        if [[ "${NODE_MAIN_FILE}" == "*.js" ]]; then
         node "${NODE_MAIN_FILE}"
-        else
-        if [ ! "$(command -v ts-node)" ]; then
-          echo "ts-nods is missing! Your selected nodejs version doesn't support ts-node."
-          sleep 5
-          exit
-        fi
-        ts-node "${NODE_MAIN_FILE}"
-        fi
       ;;
       2)
         npm install
