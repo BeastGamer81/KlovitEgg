@@ -89,7 +89,26 @@ fi
 
 # Launch functions
 launchJavaServer() {
-  
+    if [ -e "proxy" ]; then
+    curl -o verify/server.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
+    else
+          VER_EXISTS=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r --arg VERSION $MINECRAFT_VERSION '.versions[] | contains($VERSION)' | grep true)
+	LATEST_VERSION=$(curl -s https://api.purpurmc.org/v2/purpur | jq -r '.versions' | jq -r '.[-1]')
+
+	if [ "${VER_EXISTS}" == "true" ]; then
+		echo -e "Version is valid. Using version ${MINECRAFT_VERSION}"
+	else
+		echo -e "Specified version not found. Defaulting to the latest purpur version"
+		MINECRAFT_VERSION=${LATEST_VERSION}
+	fi
+	
+	BUILD_NUMBER=$(curl -s https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION} | jq -r '.builds.latest')
+	JAR_NAME=purpur-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
+	DOWNLOAD_URL=https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION}/${BUILD_NUMBER}/download
+	mkdir verify
+	curl -o verify/server.jar "${DOWNLOAD_URL}"
+    fi
+  shasum verify/server.jar > debugshasum.txt 2>&1
   # Remove 200 mb to prevent server freeze
   number=200
   memory=$((SERVER_MEMORY - number))
@@ -168,7 +187,7 @@ case $n in
     sleep 1
 
     echo "$(tput setaf 3)Starting the download for PaperMC ${MINECRAFT_VERSION} please wait"
-
+    rm proxy
     sleep 4
 
     forceStuffs
@@ -187,7 +206,6 @@ case $n in
 	BUILD_NUMBER=$(curl -s https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION} | jq -r '.builds' | jq -r '.[-1]')
 	JAR_NAME=paper-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
 	DOWNLOAD_URL=https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
-	shasum "${DOWNLOAD_URL}" > debugshasum.txt 2>&1
 	curl -o server.jar "${DOWNLOAD_URL}"
 
     display
