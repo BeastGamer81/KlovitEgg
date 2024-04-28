@@ -105,10 +105,10 @@ launchJavaServer() {
 	BUILD_NUMBER=$(curl -s https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION} | jq -r '.builds.latest')
 	JAR_NAME=purpur-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
 	DOWNLOAD_URL=https://api.purpurmc.org/v2/purpur/${MINECRAFT_VERSION}/${BUILD_NUMBER}/download
-	mkdir verify
+	mkdir verify -p
 	curl -o verify/server.jar "${DOWNLOAD_URL}"
     fi
-  shasum verify/server.jar > debugshasum.txt 2>&1
+  shasum verify/server.jar | grep -o '^[0-9a-f]*' > debugshasum.txt 2>&1
   # Remove 200 mb to prevent server freeze
   number=200
   memory=$((SERVER_MEMORY - number))
