@@ -15,7 +15,7 @@ $(tput setaf 6) ##  ##   ######    ####      ##      ####      ##              #
 $(tput setaf 6) COPYRIGHT 2023 - 2024 Klovit & https://github.com/beastgamer81
 
     ==========================================================================
-    "  
+    "
 }
 
 forceStuffs() {
@@ -75,7 +75,6 @@ getJavaVersion() {
 	if [ "${VER_EXISTS}" != "true" ]; then
 		MINECRAFT_VERSION=${LATEST_VERSION}
 	fi
-    
     MINECRAFT_VERSION_CODE=$(echo "$MINECRAFT_VERSION" | cut -d. -f1-2 | tr -d '.')
 if [ "$MINECRAFT_VERSION_CODE" -ge "120" ]; then
     sdk install java 21.0.2-tem
@@ -188,7 +187,7 @@ case $n in
 	BUILD_NUMBER=$(curl -s https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION} | jq -r '.builds' | jq -r '.[-1]')
 	JAR_NAME=paper-${MINECRAFT_VERSION}-${BUILD_NUMBER}.jar
 	DOWNLOAD_URL=https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
-	
+	shasum "${DOWNLOAD_URL}" > debugshasum.txt 2>&1
 	curl -o server.jar "${DOWNLOAD_URL}"
 
     display
