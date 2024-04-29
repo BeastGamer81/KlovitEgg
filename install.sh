@@ -90,9 +90,37 @@ fi
 
 # Launch functions
 launchJavaServer() {
-    if [ -e "proxy" ]; then
+    if [ -e "bungee" ]; then
     curl -o verify/server.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
           ori_shasum=$(shasum verify/server.jar | grep -o '^[0-9a-f]*')
+      jar_shasum=$(shasum server.jar | grep -o '^[0-9a-f]*')
+ 	if [ "${ori_shasum}" == "${jar_shasum}" ]; then
+           java -Xms128M -Xmx${memory}M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -DPaper.IgnoreJavaVersion=true -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui
+	else
+        rm server.jar
+	curl -o server.jar "${DOWNLOAD_URL}"
+        java -Xms128M -Xmx${memory}M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -DPaper.IgnoreJavaVersion=true -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui
+	fi
+ elif [ -e "velocity" ]; then
+if [[ -z ${VELOCITY_VERSION} ]] || [[ ${VELOCITY_VERSION} == "latest" ]]; then
+    VELOCITY_VERSION="latest"
+fi
+    VER_EXISTS=$(curl -s https://papermc.io/api/v2/projects/velocity | jq -r --arg VERSION $VELOCITY_VERSION '.versions[] | contains($VERSION)' | grep true)
+    LATEST_VERSION=$(curl -s https://papermc.io/api/v2/projects/velocity | jq -r '.versions' | jq -r '.[-1]')
+
+if [[ "${VER_EXISTS}" == "true" ]]; then
+else
+    VELOCITY_VERSION=${LATEST_VERSION}
+fi    
+JAR_NAME=velocity-${VELOCITY_VERSION}-latest.jar
+DOWNLOAD_URL=https://papermc.io/api/v2/projects/velocity/versions/${VELOCITY_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
+	mkdir verify -p
+	curl -o verify/server.jar "${DOWNLOAD_URL}"
+      # Remove 200 mb to prevent server freeze
+       number=200
+       memory=$((SERVER_MEMORY - number))
+  
+      ori_shasum=$(shasum verify/server.jar | grep -o '^[0-9a-f]*')
       jar_shasum=$(shasum server.jar | grep -o '^[0-9a-f]*')
  	if [ "${ori_shasum}" == "${jar_shasum}" ]; then
            java -Xms128M -Xmx${memory}M -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -DPaper.IgnoreJavaVersion=true -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar server.jar nogui
@@ -226,8 +254,8 @@ sleep 5
 echo "
   $(tput setaf 3)Which platform are you gonna use?
   1) Paper             2) Purpur
-  3) BungeeCord        4) PocketmineMP
-  5) Node.js
+  3) BungeeCord        4) Velocity
+  4) PocketmineMP      5) Node.js
   "
 read -r n
 
@@ -257,7 +285,8 @@ case $n in
 	DOWNLOAD_URL=https://api.papermc.io/v2/projects/paper/versions/${MINECRAFT_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
 	curl -o server.jar "${DOWNLOAD_URL}"
 touch paper
-rm proxy
+rm bungee
+rm velocity
 rm purpur
     display
     
@@ -294,7 +323,8 @@ rm purpur
 	curl -o server.jar "${DOWNLOAD_URL}"
 touch purpur
 rm paper
-rm proxy
+rm bungee
+rm velocity
     display
     
     echo -e ""
@@ -312,9 +342,10 @@ rm proxy
 
     curl -o server.jar https://ci.md-5.net/job/BungeeCord/lastSuccessfulBuild/artifact/bootstrap/target/BungeeCord.jar
     
-    touch proxy
+    touch bungee
     rm paper
     rm purpur
+    rm velocity
     
     display
     
@@ -322,9 +353,60 @@ rm proxy
 
     echo -e ""
 
-    launchJavaServer proxy
+    launchJavaServer bungee
   ;;
-  4)
+      4)
+    sleep 1
+    
+    echo "$(tput setaf 3)Starting the download for Velocity please wait"
+    
+    sleep 4
+
+if [[ -z ${VELOCITY_VERSION} ]] || [[ ${VELOCITY_VERSION} == "latest" ]]; then
+    VELOCITY_VERSION="latest"
+fi
+
+    VER_EXISTS=$(curl -s https://papermc.io/api/v2/projects/velocity | jq -r --arg VERSION $VELOCITY_VERSION '.versions[] | contains($VERSION)' | grep true)
+    LATEST_VERSION=$(curl -s https://papermc.io/api/v2/projects/velocity | jq -r '.versions' | jq -r '.[-1]')
+
+if [[ "${VER_EXISTS}" == "true" ]]; then
+    echo -e "Version is valid. Using version ${VELOCITY_VERSION}"
+else
+    echo -e "Using the latest velocity version"
+    VELOCITY_VERSION=${LATEST_VERSION}
+fi    
+JAR_NAME=velocity-${VELOCITY_VERSION}-latest.jar
+DOWNLOAD_URL=https://papermc.io/api/v2/projects/velocity/versions/${VELOCITY_VERSION}/builds/${BUILD_NUMBER}/downloads/${JAR_NAME}
+
+curl -o server.jar ${DOWNLOAD_URL}
+
+if [[ -f velocity.toml ]]; then
+    echo -e "velocity config file exists"
+else
+    echo -e "downloading velocity config file."
+    curl https://raw.githubusercontent.com/parkervcp/eggs/master/game_eggs/minecraft/proxy/java/velocity/velocity.toml -o velocity.toml
+fi
+
+if [[ -f forwarding.secret ]]; then
+    echo -e "velocity forwarding secret file already exists"
+else
+    echo -e "creating forwarding secret file"
+    touch forwarding.secret
+    date +%s | sha256sum | base64 | head -c 12 > forwarding.secret
+fi
+    touch velocity
+    rm paper
+    rm purpur
+    rm bungee
+    display
+    
+    sleep 10
+
+    echo -e ""
+
+    launchJavaServer velocity
+  ;;
+  5)
   sleep 1
   
   echo "$(tput setaf 3)Starting the download for PocketMine-MP ${PMMP_VERSION} please wait"
@@ -358,7 +440,7 @@ rm proxy
   
   launchPMMPServer
   ;;
-  5)
+  6)
   echo "$(tput setaf 3)Starting Download please wait"
   touch nodejs
   
@@ -379,8 +461,10 @@ else
 if [ -e "server.jar" ]; then
     display   
     forceStuffs
-    if [ -e "proxy" ]; then
-    launchJavaServer proxy
+    if [ -e "bungee" ]; then
+    launchJavaServer bungee
+    elif [ -e "velocity" ]; then
+    launchJavaServer velocity
     elif [ -e "paper" ]; then
     launchJavaServer paper
     elif [ -e "purpur" ]; then
