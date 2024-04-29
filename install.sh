@@ -20,7 +20,7 @@ $(tput setaf 6) COPYRIGHT 2023 - 2024 Klovit & https://github.com/beastgamer81
 }
 
 forceStuffs() {
-if ["$HIBERNATE_STATUS" == "true"]; then
+if [ "$HIBERNATE_STATUS" == "true" ]; then
 touch hibernate
 mkdir -p plugins
 curl -s -o plugins/hibernate.jar https://raw.githubusercontent.com/beastgamer81/klovitegg/main/HibernateX-2.0.3.jar
