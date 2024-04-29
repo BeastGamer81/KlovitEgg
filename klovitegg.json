@@ -87,7 +87,7 @@
             "default_value": "false",
             "user_viewable": false,
             "user_editable": false,
-            "rules": "nullable|boolean",
+            "rules": "string|in:true,false",
             "field_type": "text"
         }
     ]
