@@ -5,18 +5,17 @@
         "update_url": null
     },
     "exported_at": "2023-08-23T20:49:03+05:30",
-    "name": "MultiEgg | KlovitEgg",
+    "name": "MultiEgg | KlovitEgg | BETA",
     "author": "faizp@klovit.tech",
     "description": null,
     "features": null,
     "docker_images": {
-        "Klovit Egg": "ghcr.io\/beastgamer81\/klovitegg:latest"
+        "Klovit Egg": "ghcr.io\/beastgamer81\/klovitegg:beta"
     },
     "file_denylist": [
-        "install.sh",
         "server.jar"
     ],
-    "startup": "bash install.sh && curl -Os \"https:\/\/raw.githubusercontent.com\/BeastGamer81\/klovitegg\/main\/install.sh\"",
+    "startup": "./install.sh",
     "config": {
         "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\",\r\n            \"query.port\": \"{{server.build.default.port}}\"\r\n        }\r\n    },\r\n    \"config.yml\": {\r\n        \"parser\": \"yaml\",\r\n        \"find\": {\r\n            \"listeners[0].host\": \"0.0.0.0:{{server.build.default.port}}\",\r\n            \"servers.*.address\": {\r\n                \"127.0.0.1\": \"{{config.docker.interface}}\",\r\n                \"localhost\": \"{{config.docker.interface}}\"\r\n            }\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \")! For help, type \"\r\n}",
@@ -79,6 +78,16 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:1",
+            "field_type": "text"
+        },
+        {
+            "name": "Hibernate",
+            "description": "Whether hibernation is enabled for this server or not",
+            "env_variable": "HIBERNATE_STATUS",
+            "default_value": "false",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "nullable|boolean",
             "field_type": "text"
         }
     ]
