@@ -32,8 +32,18 @@
     "variables": [
         {
             "name": "Minecraft Version",
-            "description": "The version of minecraft to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
+            "description": "The version of Minecraft to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
             "env_variable": "MINECRAFT_VERSION",
+            "default_value": "latest",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:20",
+            "field_type": "text"
+        },
+        {
+            "name": "Velocity Version",
+            "description": "The version of Velocity to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
+            "env_variable": "VELOCITY_VERSION",
             "default_value": "latest",
             "user_viewable": true,
             "user_editable": true,
