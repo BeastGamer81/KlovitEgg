@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2023-08-23T20:49:03+05:30",
+    "exported_at": "2024-04-30T13:45:07+05:30",
     "name": "MultiEgg | KlovitEgg | BETA",
     "author": "faizp@klovit.tech",
     "description": null,
@@ -15,7 +15,7 @@
     "file_denylist": [
         "server.jar"
     ],
-    "startup": "./install.sh",
+    "startup": ".\/install.sh",
     "config": {
         "files": "{\r\n    \"server.properties\": {\r\n        \"parser\": \"properties\",\r\n        \"find\": {\r\n            \"server-ip\": \"0.0.0.0\",\r\n            \"server-port\": \"{{server.build.default.port}}\",\r\n            \"query.port\": \"{{server.build.default.port}}\"\r\n        }\r\n    },\r\n    \"config.yml\": {\r\n        \"parser\": \"yaml\",\r\n        \"find\": {\r\n            \"listeners[0].host\": \"0.0.0.0:{{server.build.default.port}}\",\r\n            \"servers.*.address\": {\r\n                \"127.0.0.1\": \"{{config.docker.interface}}\",\r\n                \"localhost\": \"{{config.docker.interface}}\"\r\n            }\r\n        }\r\n    }\r\n}",
         "startup": "{\r\n    \"done\": \")! For help, type \"\r\n}",
@@ -34,16 +34,6 @@
             "name": "Minecraft Version",
             "description": "The version of Minecraft to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
             "env_variable": "MINECRAFT_VERSION",
-            "default_value": "latest",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "nullable|string|max:20",
-            "field_type": "text"
-        },
-        {
-            "name": "Velocity Version",
-            "description": "The version of Velocity to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
-            "env_variable": "VELOCITY_VERSION",
             "default_value": "latest",
             "user_viewable": true,
             "user_editable": true,
@@ -98,6 +88,16 @@
             "user_viewable": false,
             "user_editable": false,
             "rules": "string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Velocity Version",
+            "description": "The version of Velocity to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
+            "env_variable": "VELOCITY_VERSION",
+            "default_value": "latest",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:20",
             "field_type": "text"
         }
     ]
