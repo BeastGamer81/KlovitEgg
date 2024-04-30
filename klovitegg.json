@@ -32,7 +32,7 @@
     "variables": [
         {
             "name": "Minecraft Version",
-            "description": "The version of minecraft to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
+            "description": "The version of Minecraft to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
             "env_variable": "MINECRAFT_VERSION",
             "default_value": "latest",
             "user_viewable": true,
@@ -52,9 +52,9 @@
         },
         {
             "name": "Node Version",
-            "description": "The version of Node to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
+            "description": "The version of Node to download. Leave at 20 to get the NodeJS 20 version.",
             "env_variable": "NODE_VERSION",
-            "default_value": "latest",
+            "default_value": "20",
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:20",
@@ -78,6 +78,26 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:1",
+            "field_type": "text"
+        },
+        {
+            "name": "Hibernate",
+            "description": "Whether hibernation is enabled for this server or not",
+            "env_variable": "HIBERNATE_STATUS",
+            "default_value": "false",
+            "user_viewable": false,
+            "user_editable": false,
+            "rules": "string|in:true,false",
+            "field_type": "text"
+        },
+        {
+            "name": "Velocity Version",
+            "description": "The version of Velocity to download. Leave at latest to always get the latest version. Invalid versions will default to latest.",
+            "env_variable": "VELOCITY_VERSION",
+            "default_value": "latest",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:20",
             "field_type": "text"
         }
     ]
