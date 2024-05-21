@@ -109,6 +109,7 @@ fi
     LATEST_VERSION=$(curl -s https://papermc.io/api/v2/projects/velocity | jq -r '.versions' | jq -r '.[-1]')
 
 if [[ "${VER_EXISTS}" == "true" ]]; then
+VELOCITY_VERSION=${VELOCITY_VERSION}
 else
     VELOCITY_VERSION=${LATEST_VERSION}
 fi    
