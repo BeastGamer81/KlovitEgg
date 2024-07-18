@@ -256,7 +256,7 @@ echo "
   $(tput setaf 3)Which platform are you gonna use?
   1) Paper             2) Purpur
   3) BungeeCord        4) Velocity
-  4) PocketmineMP      5) Node.js
+  5) PocketmineMP      6) Node.js
   "
 read -r n
 
